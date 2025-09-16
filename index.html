@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Basic Website</title>
+    <meta name="description" content="A very basic HTML/CSS/JS starter">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>Welcome</h1>
+      <button id="themeToggle" aria-pressed="false" class="button">Toggle Theme</button>
+    </header>
+
+    <main class="container" id="app">
+      <section class="card">
+        <h2>Getting Started</h2>
+        <p>This is a minimal starter for learning web development.</p>
+        <ul>
+          <li>HTML for structure</li>
+          <li>CSS for styling</li>
+          <li>JavaScript for interactivity</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Try It</h2>
+        <p>Click the button to increase the counter.</p>
+        <div class="counter">
+          <button id="increment" class="button">Clicked <span id="count">0</span> times</button>
+        </div>
+        <form id="nameForm" class="stack" autocomplete="off">
+          <label for="nameInput">Your name</label>
+          <input id="nameInput" name="name" type="text" placeholder="Ada Lovelace" />
+          <button type="submit" class="button">Greet</button>
+        </form>
+        <p id="greeting" class="greeting" role="status" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <small>&copy; <span id="year"></span> My Basic Website</small>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+  </html>
+
+
