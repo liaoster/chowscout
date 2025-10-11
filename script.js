@@ -2,6 +2,7 @@
 (() => {
   const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
   const root = document.documentElement;
+  lucide.createIcons();
 
   // Theme initialization
   const savedTheme = localStorage.getItem('theme');
@@ -10,10 +11,53 @@
 
   // Toggle theme
   const themeToggle = document.getElementById('themeToggle');
+  let animating = false;
+
   themeToggle?.addEventListener('click', () => {
-    const nowLight = root.classList.toggle('light');
+    if (animating) return; // ignore clicks while animating
+    animating = true;
+
+    const nowLight = document.documentElement.classList.toggle('light');
     localStorage.setItem('theme', nowLight ? 'light' : 'dark');
     themeToggle.setAttribute('aria-pressed', String(nowLight));
+
+    const oldSvg = themeToggle.querySelector('svg');
+    if (!oldSvg) {
+      animating = false;
+      return;
+    }
+
+    oldSvg.style.opacity = 0;
+    oldSvg.style.transform = 'rotate(90deg) scale(0.8)';
+
+    setTimeout(() => {
+      oldSvg.remove();
+
+      const newIcon = document.createElement('i');
+      newIcon.setAttribute('data-lucide', nowLight ? 'moon' : 'sun');
+      themeToggle.appendChild(newIcon);
+      lucide.createIcons();
+
+      const newSvg = themeToggle.querySelector('svg');
+      if (!newSvg) {
+        animating = false;
+        return;
+      }
+
+      newSvg.style.opacity = 0;
+      newSvg.style.transform = 'rotate(-90deg) scale(0.8)';
+
+      requestAnimationFrame(() => {
+        newSvg.style.opacity = 1;
+        newSvg.style.transform = 'rotate(0deg) scale(1)';
+      });
+
+      // Animation done after 300ms
+      setTimeout(() => {
+        animating = false;
+      }, 300);
+
+    }, 300);
   });
 
   // Counter button

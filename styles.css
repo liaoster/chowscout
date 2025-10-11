@@ -36,6 +36,9 @@ body {
   padding: 16px 20px;
   background: var(--panel);
   border-bottom: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .site-footer {
@@ -65,10 +68,18 @@ p { margin: 0 0 12px; color: var(--muted); }
   background: var(--accent);
   color: var(--accent-contrast);
   border: none;
-  padding: 10px 14px;
+  padding: 10px 12px;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
+}
+
+#themeToggle svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  transform-origin: center;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .button:hover { filter: brightness(1.05); }
