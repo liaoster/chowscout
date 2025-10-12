@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,7 +9,9 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://unpkg.com/lucide@latest"></script>
   </head>
+
   <body>
+
     <header class="site-header">
       <div class="header-main">
         <h1>Chow Scout</h1>
@@ -22,18 +25,39 @@
     </header>
 
     <main class="container" id="app">
+
       <section class="card">
-        <h2>Getting Started</h2>
-        <p>This is a minimal starter for learning web development.</p>
-        <ul>
-          <li>HTML for structure</li>
-          <li>CSS for styling</li>
-          <li>JavaScript for interactivity</li>
-          <li>Adding a bullet as a test</li>
-        </ul>
+        <h2>Directions</h2>
+        <ol>
+          <li>Enter your zip code to search nearby</li>
+          <li>Select the restaurant you want to order from</li>
+          <li>Select what you want to order</li>
+          <li>Enter your address if you want delivery prices (otherwise it will just be pickup prices)</li>
+          <li>Click "Scout" to find the cheapest site to order from!</li>
+        </ol>
       </section>
 
       <section class="card">
+        <h2>Search for Chow</h2>
+        <form id="scoutForm" class="stack" autocomplete="off">
+          <label for="zipInput">Zip Code</label>
+          <input id="zipInput" name="zip" type="text" placeholder="10001" required pattern="\d{5}" />
+          
+          <label for="addressInput">Delivery Address (optional)</label>
+          <input id="addressInput" name="address" type="text" placeholder="123 Main St, New York, NY 10001" />
+          
+          <button type="submit" class="button">Scout</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Results</h2>
+        <div id="results">
+          <p class="muted">No results yet. Click "Scout" to find the cheapest food delivery service!</p>
+        </div>
+      </section>
+
+      <!-- <section class="card">
         <h2>Try It</h2>
         <p>Click the button to increase the counter.</p>
         <div class="counter">
@@ -45,7 +69,8 @@
           <button type="submit" class="button">Greet</button>
         </form>
         <p id="greeting" class="greeting" role="status" aria-live="polite"></p>
-      </section>
+      </section> -->
+
     </main>
 
     <footer class="site-footer">
@@ -53,7 +78,7 @@
     </footer>
 
     <script src="script.js"></script>
+
   </body>
-  </html>
 
-
+</html>
