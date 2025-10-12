@@ -36,9 +36,18 @@ body {
   padding: 16px 20px;
   background: var(--panel);
   border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.header-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.header-sub {
+  font-size: 16px;
+  color: var(--muted);
+  margin-top: 4px;
 }
 
 .site-footer {
@@ -61,7 +70,7 @@ body {
   margin-bottom: 20px;
 }
 
-h1, h2 { line-height: 1.2; margin: 0 0 12px; }
+h1, h2, h4 { line-height: 1.2; margin: 0 0 0 0; }
 p { margin: 0 0 12px; color: var(--muted); }
 
 .button {

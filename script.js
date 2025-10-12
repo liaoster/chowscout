@@ -11,8 +11,15 @@
 
   // Toggle theme
   const themeToggle = document.getElementById('themeToggle');
-  let animating = false;
 
+  // Set the initial icon
+  const icon = themeToggle.querySelector('i');
+  if (icon) {
+    icon.setAttribute('data-lucide', savedTheme === 'light' ? 'moon' : 'sun');
+  }
+  lucide.createIcons();
+
+  let animating = false;
   themeToggle?.addEventListener('click', () => {
     if (animating) return; // ignore clicks while animating
     animating = true;
