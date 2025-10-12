@@ -50,6 +50,7 @@ body {
   font-size: 16px;
   color: var(--muted);
   margin-top: 4px;
+  margin-right: 45px;
   align-items: left;
 }
 
@@ -83,8 +84,12 @@ p, ol { margin: 12px 0; color: var(--muted); }
   padding: 10px 12px;
   border-radius: 10px;
   font-weight: 600;
+  font-size: 16px;
   cursor: pointer;
 }
+
+.button:hover { filter: brightness(1.05); }
+.button:active { transform: translateY(1px); }
 
 #themeToggle svg {
   width: 18px;
@@ -94,8 +99,7 @@ p, ol { margin: 12px 0; color: var(--muted); }
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.button:hover { filter: brightness(1.05); }
-.button:active { transform: translateY(1px); }
+#map { height: 180px; width: 100%; border-radius: 12px; margin-top: 12px; }
 
 .stack { display: grid; gap: 8px; margin-top: 12px; }
 input[type="text"] {
