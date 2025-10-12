@@ -1,25 +1,24 @@
 // Basic site interactivity
 (() => {
-  const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
   const root = document.documentElement;
-  lucide.createIcons();
 
   // Theme initialization
+  const themeToggle = document.getElementById('themeToggle');
+  const prefersLight = window.matchMedia?.('(prefers-color-scheme: light)').matches ?? false;
   const savedTheme = localStorage.getItem('theme');
   const isLight = savedTheme ? savedTheme === 'light' : prefersLight;
   if (isLight) root.classList.add('light');
 
-  // Toggle theme
-  const themeToggle = document.getElementById('themeToggle');
-
-  // Set the initial icon
+  // Set initial icon
   const icon = themeToggle.querySelector('i');
   if (icon) {
-    icon.setAttribute('data-lucide', savedTheme === 'light' ? 'moon' : 'sun');
+    icon.setAttribute('data-lucide', isLight ? 'moon' : 'sun');
   }
   lucide.createIcons();
 
+  // Toggle theme
   let animating = false;
+
   themeToggle?.addEventListener('click', () => {
     if (animating) return; // ignore clicks while animating
     animating = true;
