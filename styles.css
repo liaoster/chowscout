@@ -8,6 +8,7 @@ html, body { margin: 0; padding: 0; }
   --text: #e5e7eb;
   --muted: #94a3b8;
   --accent: #4f46e5;
+  /* --accent: #2563eb; */
   --accent-contrast: #ffffff;
   --shadow: 0 10px 20px rgba(0,0,0,0.25);
 }
@@ -17,7 +18,8 @@ html, body { margin: 0; padding: 0; }
   --panel: #ffffff;
   --text: #0f172a;
   --muted: #475569;
-  --accent: #2563eb;
+  --accent: #eb7725;
+  /* --accent: #2563eb; */
   --accent-contrast: #ffffff;
   --shadow: 0 10px 20px rgba(2,6,23,0.08);
 }
