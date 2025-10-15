@@ -99,7 +99,7 @@ p, ol { margin: 12px 0; color: var(--muted); }
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-#map { height: 400px; width: 100%; border-radius: 12px; margin-top: 12px; }
+#map { height: 600px; width: 100%; border-radius: 12px; margin-top: 12px; }
 .filters { margin: 10px 0; }
 
 .stack { display: grid; gap: 8px; margin-top: 12px; }
