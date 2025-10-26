@@ -45,11 +45,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Helper: Query Overpass API ---
   async function fetchNearbyPlaces(lat, lon, categories) {
-    const radius = 1000; // meters
+    const radius = 1000;  // search radius
+    if (!categories?.length) categories = ["restaurant", "cafe", "fast_food"];
+
     const query = `
       [out:json];
       (
-        ${categories.map(cat => `node["amenity"="${cat}"](around:${radius},${lat},${lon});`).join("\n")}
+        ${categories.map(cat => `
+          node["amenity"="${cat}"](around:${radius},${lat},${lon});
+          way["amenity"="${cat}"](around:${radius},${lat},${lon});
+          relation["amenity"="${cat}"](around:${radius},${lat},${lon});
+        `).join("\n")}
       );
       out center;
     `;
@@ -58,8 +64,11 @@ document.addEventListener("DOMContentLoaded", () => {
       method: "POST",
       body: query
     });
+
     if (!res.ok) throw new Error("Overpass request failed");
     const data = await res.json();
+
+    console.log("Found places:", data.elements.length);
     return data.elements;
   }
 
@@ -119,17 +128,19 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       let coords;
 
-      // Try to use geolocation
-      coords = await new Promise((resolve, reject) => {
-        if (!navigator.geolocation) return reject();
-        navigator.geolocation.getCurrentPosition(
-          pos => resolve([pos.coords.latitude, pos.coords.longitude]),
-          () => reject()
-        );
-      }).catch(() => null);
-
-      // Fallback to ZIP geocoding
-      if (!coords) coords = await geocodeZip(zip);
+      if (zip) {
+        // Use ZIP if user entered one
+        coords = await geocodeZip(zip);
+      } else {
+        // Otherwise use geolocation
+        coords = await new Promise((resolve, reject) => {
+          if (!navigator.geolocation) return reject();
+          navigator.geolocation.getCurrentPosition(
+            pos => resolve([pos.coords.latitude, pos.coords.longitude]),
+            () => reject()
+          );
+        });
+      }
 
       const [lat, lon] = coords;
       showUserLocation(lat, lon);
@@ -146,10 +157,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Auto locate on load (optional) ---
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      pos => {
+      async pos => {
         const { latitude, longitude } = pos.coords;
         map.setView([latitude, longitude], 14);
         showUserLocation(latitude, longitude);
+
+        // Auto-fetch restaurants, cafes, etc.
+        const defaultCategories = ["restaurant", "cafe", "fast_food"];
+        try {
+          const places = await fetchNearbyPlaces(latitude, longitude, defaultCategories);
+          showResults(places, [latitude, longitude]);
+        } catch (err) {
+          console.error(err);
+        }
       },
       () => {
         console.warn("User location unavailable — using default map center.");
