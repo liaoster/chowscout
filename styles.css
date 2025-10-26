@@ -118,7 +118,7 @@ p, ol { margin: 12px 0; color: var(--muted); }
 
 .map-btn {
   position: absolute;
-  top: 5%;
+  top: 4%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
