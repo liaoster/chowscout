@@ -66,29 +66,29 @@
     }, 300);
   });
 
-  // Counter button
-  const countSpan = document.getElementById('count');
-  const incrementBtn = document.getElementById('increment');
-  let count = 0;
-  incrementBtn?.addEventListener('click', () => {
-    count += 1;
-    if (countSpan) countSpan.textContent = String(count);
-  });
+  // // Counter button
+  // const countSpan = document.getElementById('count');
+  // const incrementBtn = document.getElementById('increment');
+  // let count = 0;
+  // incrementBtn?.addEventListener('click', () => {
+  //   count += 1;
+  //   if (countSpan) countSpan.textContent = String(count);
+  // });
 
-  // Simple form handling
-  const form = document.getElementById('nameForm');
-  const input = document.getElementById('nameInput');
-  const greeting = document.getElementById('greeting');
+  // // Simple form handling
+  // const form = document.getElementById('nameForm');
+  // const input = document.getElementById('nameInput');
+  // const greeting = document.getElementById('greeting');
 
-  form?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const name = (input && 'value' in input) ? String(input.value).trim() : '';
-    if (!name) {
-      if (greeting) greeting.textContent = 'Please enter a name.';
-      return;
-    }
-    if (greeting) greeting.textContent = `Hello, ${name}!`;
-  });
+  // form?.addEventListener('submit', (e) => {
+  //   e.preventDefault();
+  //   const name = (input && 'value' in input) ? String(input.value).trim() : '';
+  //   if (!name) {
+  //     if (greeting) greeting.textContent = 'Please enter a name.';
+  //     return;
+  //   }
+  //   if (greeting) greeting.textContent = `Hello, ${name}!`;
+  // });
 
   // Footer year
   const yearEl = document.getElementById('year');

@@ -14,7 +14,7 @@ html, body { margin: 0; padding: 0; }
 }
 
 .light {
-  --bg: #f8fafc;
+  --bg: #e8e8e8;
   --panel: #ffffff;
   --text: #0f172a;
   --muted: #475569;
@@ -99,14 +99,23 @@ p, ol { margin: 12px 0; color: var(--muted); }
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-#map { height: 600px; width: 100%; border-radius: 12px; margin-top: 12px; }
-.filters { margin: 10px 0; }
+#map { height: 400px; width: 100%; border-radius: 12px; margin-top: 12px; }
+
+/* .filters { margin: 10px 0; } */
+
+.map-icon img {
+  border-radius: 50%;
+  background: white;
+  padding: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
 
 .stack { display: grid; gap: 8px; margin-top: 12px; }
 input[type="text"] {
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.15);
+  /* border: 1px solid rgba(255,255,255,0.15); */
+  border: 1px solid #94a3b8;
   background: transparent;
   color: var(--text);
 }

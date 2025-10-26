@@ -13,24 +13,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const userLayer = L.layerGroup().addTo(map);
   const resultsLayer = L.layerGroup().addTo(map);
 
-  // --- Lucide icon factory ---
-  function lucideIcon(name, color = "#e63946") {
-    return L.divIcon({
-      className: "lucide-marker",
-      html: `<i data-lucide="${name}" style="color:${color}; width:24px; height:24px;"></i>`,
-      iconSize: [24, 24],
-      iconAnchor: [12, 24],
-      popupAnchor: [0, -22]
+  // --- Custom icon factory ---
+  function makeIcon(iconUrl, size = [32, 32]) {
+    return L.icon({
+      iconUrl,
+      iconSize: size,
+      iconAnchor: [size[0] / 2, size[1]], // anchor at bottom center
+      popupAnchor: [0, -size[1] + 4],
+      className: "map-icon"
     });
   }
 
-  // --- Icons for different categories ---
+  // --- Food category icons (you can replace URLs with your own assets) ---
   const icons = {
-    restaurant: lucideIcon("utensils", "#e63946"),
-    cafe: lucideIcon("coffee", "#ff9f1c"),
-    fast_food: lucideIcon("hamburger", "#f77f00"), // custom alias we'll map later
-    default: lucideIcon("map-pin", "#1d3557")
+    restaurant: makeIcon("https://cdn-icons-png.flaticon.com/128/3170/3170733.png"), // fork & knife
+    cafe: makeIcon("https://cdn-icons-png.flaticon.com/128/13888/13888476.png"), // coffee cup
+    fast_food: makeIcon("https://cdn-icons-png.flaticon.com/128/5787/5787016.png"), // burger
+    default: makeIcon("https://cdn-icons-png.flaticon.com/128/149/149059.png") // map pin
   };
+
+  const userIcon = makeIcon("https://cdn-icons-png.flaticon.com/128/149/149060.png", [28, 28]);
 
   // --- Helper: Convert ZIP to coordinates (Nominatim) ---
   async function geocodeZip(zip) {
@@ -93,26 +95,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     if (bounds.length > 1) map.fitBounds(bounds, { padding: [40, 40] });
-
-    // Re-render Lucide icons after Leaflet adds them to DOM
-    lucide.createIcons();
   }
 
   // --- Helper: Show user location ---
   function showUserLocation(lat, lon) {
     userLayer.clearLayers();
-
-    const userMarker = L.divIcon({
-      className: "lucide-marker",
-      html: `<i data-lucide="map-pin" style="color:#1e90ff; width:28px; height:28px;"></i>`,
-      iconSize: [28, 28],
-      iconAnchor: [14, 28]
-    });
-
-    L.marker([lat, lon], { icon: userMarker }).bindPopup("You are here").addTo(userLayer);
-
-    // Re-render Lucide icons for user marker too
-    lucide.createIcons();
+    L.marker([lat, lon], { icon: userIcon })
+      .bindPopup("You are here")
+      .addTo(userLayer);
   }
 
   // --- Handle form submission ---
