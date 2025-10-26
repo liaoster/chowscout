@@ -18,18 +18,18 @@ document.addEventListener("DOMContentLoaded", () => {
     return L.icon({
       iconUrl,
       iconSize: size,
-      iconAnchor: [size[0] / 2, size[1]], // anchor at bottom center
+      iconAnchor: [size[0] / 2, size[1]],
       popupAnchor: [0, -size[1] + 4],
       className: "map-icon"
     });
   }
 
-  // --- Food category icons (you can replace URLs with your own assets) ---
+  // --- Food category icons ---
   const icons = {
-    restaurant: makeIcon("https://cdn-icons-png.flaticon.com/128/3170/3170733.png"), // fork & knife
-    cafe: makeIcon("https://cdn-icons-png.flaticon.com/128/13888/13888476.png"), // coffee cup
-    fast_food: makeIcon("https://cdn-icons-png.flaticon.com/128/5787/5787016.png"), // burger
-    default: makeIcon("https://cdn-icons-png.flaticon.com/128/149/149059.png") // map pin
+    restaurant: makeIcon("https://cdn-icons-png.flaticon.com/128/3170/3170733.png"),
+    cafe: makeIcon("https://cdn-icons-png.flaticon.com/128/13888/13888476.png"),
+    fast_food: makeIcon("https://cdn-icons-png.flaticon.com/128/5787/5787016.png"),
+    default: makeIcon("https://cdn-icons-png.flaticon.com/128/149/149059.png")
   };
 
   const userIcon = makeIcon("https://cdn-icons-png.flaticon.com/128/149/149060.png", [28, 28]);
@@ -37,15 +37,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Helper: Convert ZIP to coordinates (Nominatim) ---
   async function geocodeZip(zip) {
     const url = `https://nominatim.openstreetmap.org/search?postalcode=${zip}&country=us&format=json&limit=1`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (!data.length) throw new Error("Zip code not found");
-    return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to fetch geocode");
+      const data = await res.json();
+      if (!data.length) throw new Error("Zip code not found");
+      return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+    } catch (err) {
+      console.error(err);
+      throw new Error("Failed to geocode ZIP code");
+    }
   }
 
   // --- Helper: Query Overpass API ---
   async function fetchNearbyPlaces(lat, lon, categories) {
-    const radius = 1000;  // search radius
+    const radius = 1000;
     if (!categories?.length) categories = ["restaurant", "cafe", "fast_food"];
 
     const query = `
@@ -64,10 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
       method: "POST",
       body: query
     });
-
     if (!res.ok) throw new Error("Overpass request failed");
     const data = await res.json();
-
     console.log("Found places:", data.elements.length);
     return data.elements;
   }
@@ -75,7 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Helper: Show results ---
   function showResults(places, userCoords) {
     resultsLayer.clearLayers();
-
     if (!places?.length) {
       alert("No nearby places found.");
       return;
@@ -83,35 +86,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const bounds = [userCoords];
     places.forEach(p => {
-      if (!p.lat || !p.lon) return;
+      const lat = p.lat ?? p.center?.lat;
+      const lon = p.lon ?? p.center?.lon;
+      if (!lat || !lon) return;
 
       const name = p.tags.name || "Unnamed place";
       const type = p.tags.amenity || "place";
       const cuisine = p.tags.cuisine ? `<br><b>Cuisine:</b> ${p.tags.cuisine}` : "";
 
-      // Map Overpass amenity to our icon set
       let icon = icons.default;
       if (type === "restaurant") icon = icons.restaurant;
       else if (type === "cafe") icon = icons.cafe;
       else if (type === "fast_food") icon = icons.fast_food;
 
-      const marker = L.marker([p.lat, p.lon], { icon }).bindPopup(`
-        <b>${name}</b><br>${type}${cuisine}
-      `);
-
+      const marker = L.marker([lat, lon], { icon }).bindPopup(`<b>${name}</b><br>${type}${cuisine}`);
       resultsLayer.addLayer(marker);
-      bounds.push([p.lat, p.lon]);
+      bounds.push([lat, lon]);
     });
 
-    if (bounds.length > 1) map.fitBounds(bounds, { padding: [40, 40] });
+    if (bounds.length > 1) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 17 });
   }
 
-  // --- Helper: Show user location ---
+  // --- Show user location ---
   function showUserLocation(lat, lon) {
     userLayer.clearLayers();
-    L.marker([lat, lon], { icon: userIcon })
-      .bindPopup("You are here")
-      .addTo(userLayer);
+    L.marker([lat, lon], { icon: userIcon }).bindPopup("You are here").addTo(userLayer);
   }
 
   // --- Handle form submission ---
@@ -120,27 +119,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const zip = zipInput.value.trim();
-    const categories = Array.from(
-      form.querySelectorAll(".filters input:checked")
-    ).map(cb => cb.value);
+    let categories = Array.from(form.querySelectorAll(".filters input:checked")).map(cb => cb.value);
+    if (!categories.length) categories = ["restaurant", "cafe", "fast_food"];
 
     try {
       let coords;
-
-      if (zip) {
-        // Use ZIP if user entered one
-        coords = await geocodeZip(zip);
-      } else {
-        // Otherwise use geolocation
-        coords = await new Promise((resolve, reject) => {
+      const zip = zipInput.value.trim();
+      coords = zip ? await geocodeZip(zip) :
+        await new Promise((resolve, reject) => {
           if (!navigator.geolocation) return reject();
           navigator.geolocation.getCurrentPosition(
             pos => resolve([pos.coords.latitude, pos.coords.longitude]),
             () => reject()
           );
         });
-      }
 
       const [lat, lon] = coords;
       showUserLocation(lat, lon);
@@ -154,26 +146,61 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // --- Auto locate on load (optional) ---
+  // --- Auto locate on load ---
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      async pos => {
-        const { latitude, longitude } = pos.coords;
-        map.setView([latitude, longitude], 14);
-        showUserLocation(latitude, longitude);
+    navigator.geolocation.getCurrentPosition(async pos => {
+      const { latitude, longitude } = pos.coords;
+      map.setView([latitude, longitude], 14);
+      showUserLocation(latitude, longitude);
 
-        // Auto-fetch restaurants, cafes, etc.
-        const defaultCategories = ["restaurant", "cafe", "fast_food"];
-        try {
-          const places = await fetchNearbyPlaces(latitude, longitude, defaultCategories);
-          showResults(places, [latitude, longitude]);
-        } catch (err) {
-          console.error(err);
-        }
-      },
-      () => {
-        console.warn("User location unavailable — using default map center.");
+      try {
+        const places = await fetchNearbyPlaces(latitude, longitude, ["restaurant","cafe","fast_food"]);
+        showResults(places, [latitude, longitude]);
+      } catch (err) {
+        console.error(err);
       }
-    );
+    }, () => console.warn("User location unavailable — using default map center."));
   }
+
+  // --- Floating "Search This Area" button ---
+  const searchHereBtn = document.getElementById("searchHere");
+  searchHereBtn.style.display = "none";
+
+  // Show button immediately
+  searchHereBtn.style.display = "block"; // make visible
+  searchHereBtn.classList.add("show"); // apply CSS fade/opacity effect
+
+  // Show button after map is moved
+  map.on("moveend", () => {
+    searchHereBtn.classList.add("show");
+    searchHereBtn.style.display = "block";
+  });
+
+  searchHereBtn.addEventListener("click", async () => {
+    try {
+      const center = map.getCenter();
+      const lat = center.lat;
+      const lon = center.lng;
+
+      let categories = Array.from(form.querySelectorAll(".filters input:checked")).map(cb => cb.value);
+      if (!categories.length) categories = ["restaurant", "cafe", "fast_food"];
+
+      searchHereBtn.textContent = "Searching...";
+      searchHereBtn.disabled = true;
+
+      const places = await fetchNearbyPlaces(lat, lon, categories);
+      showResults(places, [lat, lon]);
+
+      // Reset button after search
+      searchHereBtn.textContent = "Scount Here";
+      searchHereBtn.disabled = false;
+      searchHereBtn.classList.remove("show");
+      searchHereBtn.style.display = "none";
+    } catch (err) {
+      console.error(err);
+      alert("Failed to find nearby places. Try moving the map or zooming out.");
+      searchHereBtn.textContent = "Scount Here";
+      searchHereBtn.disabled = false;
+    }
+  });
 });

@@ -99,7 +99,13 @@ p, ol { margin: 12px 0; color: var(--muted); }
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-#map { height: 400px; width: 100%; border-radius: 12px; margin-top: 12px; }
+#map {
+  position: relative;
+  height: 400px;
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 12px;
+}
 
 /* .filters { margin: 10px 0; } */
 
@@ -108,6 +114,36 @@ p, ol { margin: 12px 0; color: var(--muted); }
   background: white;
   padding: 4px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.map-btn {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: var(--accent-contrast);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 10px 16px;
+  border-radius: 9999px; /* pill shape */
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.map-btn:hover {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  transform: translateX(-50%) scale(1.05);
+}
+.map-btn.show {
+  opacity: 1;
+}
+.map-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .stack { display: grid; gap: 8px; margin-top: 12px; }
