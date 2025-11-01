@@ -177,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } finally {
         setSearching(false);
       }
-    }, () => console.warn("User location unavailable — using default map center."));
+    }, () => console.warn("User location unavailable — using default map center"));
   }
 
   // --- Floating "Search This Area" button ---
@@ -238,7 +238,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    locateBtn.textContent = "⌛"; // show temporary loading state
+    locateBtn.innerHTML = '<i data-lucide="hourglass"></i>'
+    lucide.createIcons();
 
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
@@ -248,19 +249,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
           setSearching(true);
-          const places = await fetchNearbyPlaces(latitude, longitude, ["restaurant","cafe","fast_food"]);
+          const places = await fetchNearbyPlaces(latitude, longitude, ["restaurant", "cafe", "fast_food"]);
           showResults(places, [latitude, longitude]);
         } catch (err) {
           console.error(err);
           alert("Could not fetch nearby places.");
         } finally {
           setSearching(false);
-          locateBtn.textContent = "📍"; // reset icon
+          locateBtn.innerHTML = '<i data-lucide="locate-fixed"></i>'; // reset to icon
+          lucide.createIcons(); // re-render Lucide icon
         }
       },
       () => {
-        alert("Unable to get your location.");
-        locateBtn.textContent = "📍";
+        alert("User location unavailable — using default map center");
+        locateBtn.innerHTML = '<i data-lucide="locate-fixed"></i>'; // reset to icon
+        lucide.createIcons(); // re-render Lucide icon
       }
     );
   });
