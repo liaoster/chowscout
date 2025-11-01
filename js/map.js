@@ -49,18 +49,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // --- Helper: Query Overpass API ---
+  // --- Query Overpass API for nearby places ---
   async function fetchNearbyPlaces(lat, lon, categories) {
-    const radius = 1000;
+    // Get current map bounds dynamically
+    const bounds = map.getBounds();
+    const south = bounds.getSouth();
+    const west = bounds.getWest();
+    const north = bounds.getNorth();
+    const east = bounds.getEast();
+
     if (!categories?.length) categories = ["restaurant", "cafe", "fast_food"];
 
+    // Overpass bounding box query format: (south,west,north,east)
     const query = `
-      [out:json];
+      [out:json][timeout:25];
       (
         ${categories.map(cat => `
-          node["amenity"="${cat}"](around:${radius},${lat},${lon});
-          way["amenity"="${cat}"](around:${radius},${lat},${lon});
-          relation["amenity"="${cat}"](around:${radius},${lat},${lon});
+          node["amenity"="${cat}"](${south},${west},${north},${east});
+          way["amenity"="${cat}"](${south},${west},${north},${east});
+          relation["amenity"="${cat}"](${south},${west},${north},${east});
         `).join("\n")}
       );
       out center;
@@ -70,22 +77,28 @@ document.addEventListener("DOMContentLoaded", () => {
       method: "POST",
       body: query
     });
+
     if (!res.ok) throw new Error("Overpass request failed");
     const data = await res.json();
     console.log("Found places:", data.elements.length);
     return data.elements;
   }
 
-  // --- Helper: Show results ---
+  // --- Show results on map ---
   function showResults(places, userCoords) {
     resultsLayer.clearLayers();
+
     if (!places?.length) {
       alert("No nearby places found.");
       return;
     }
 
+    // Limit number of displayed places
+    const MAX_RESULTS = 50;
+    const limitedPlaces = places.slice(0, MAX_RESULTS);
+
     const bounds = [userCoords];
-    places.forEach(p => {
+    limitedPlaces.forEach(p => {
       const lat = p.lat ?? p.center?.lat;
       const lon = p.lon ?? p.center?.lon;
       if (!lat || !lon) return;
@@ -110,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Show user location ---
   function showUserLocation(lat, lon) {
     userLayer.clearLayers();
-    L.marker([lat, lon], { icon: userIcon }).bindPopup("You are here").addTo(userLayer);
+    L.marker([lat, lon], { icon: userIcon, zIndexOffset: 100 }).bindPopup("You are here").addTo(userLayer);
   }
 
   // --- Handle form submission ---
@@ -138,8 +151,10 @@ document.addEventListener("DOMContentLoaded", () => {
       showUserLocation(lat, lon);
       map.setView([lat, lon], 14);
 
+      setSearching(true);
       const places = await fetchNearbyPlaces(lat, lon, categories);
       showResults(places, [lat, lon]);
+      setSearching(false);
     } catch (err) {
       console.error(err);
       alert("Failed to find nearby restaurants. Please try again.");
@@ -154,10 +169,13 @@ document.addEventListener("DOMContentLoaded", () => {
       showUserLocation(latitude, longitude);
 
       try {
+        setSearching(true);
         const places = await fetchNearbyPlaces(latitude, longitude, ["restaurant","cafe","fast_food"]);
         showResults(places, [latitude, longitude]);
       } catch (err) {
         console.error(err);
+      } finally {
+        setSearching(false);
       }
     }, () => console.warn("User location unavailable — using default map center."));
   }
@@ -165,6 +183,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // --- Floating "Search This Area" button ---
   const searchHereBtn = document.getElementById("searchHere");
   searchHereBtn.style.display = "none";
+
+  function setSearching(isSearching) {
+    const btn = document.getElementById("searchHere");
+    if (!btn) return;
+
+    btn.textContent = isSearching ? "Searching..." : "Scout Here";
+    btn.disabled = isSearching;
+  }
 
   // Show button immediately
   searchHereBtn.style.display = "block"; // make visible
@@ -185,21 +211,20 @@ document.addEventListener("DOMContentLoaded", () => {
       let categories = Array.from(form.querySelectorAll(".filters input:checked")).map(cb => cb.value);
       if (!categories.length) categories = ["restaurant", "cafe", "fast_food"];
 
-      searchHereBtn.textContent = "Searching...";
-      searchHereBtn.disabled = true;
-
+      setSearching(true);
       const places = await fetchNearbyPlaces(lat, lon, categories);
       showResults(places, [lat, lon]);
+      setSearching(false);
 
       // Reset button after search
-      searchHereBtn.textContent = "Scount Here";
+      searchHereBtn.textContent = "Scout Here";
       searchHereBtn.disabled = false;
       searchHereBtn.classList.remove("show");
       searchHereBtn.style.display = "none";
     } catch (err) {
       console.error(err);
       alert("Failed to find nearby places. Try moving the map or zooming out.");
-      searchHereBtn.textContent = "Scount Here";
+      searchHereBtn.textContent = "Scout Here";
       searchHereBtn.disabled = false;
     }
   });
