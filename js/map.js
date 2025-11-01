@@ -228,4 +228,40 @@ document.addEventListener("DOMContentLoaded", () => {
       searchHereBtn.disabled = false;
     }
   });
+
+  // --- Find My Location button ---
+  const locateBtn = document.getElementById("locateBtn");
+
+  locateBtn.addEventListener("click", async () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    locateBtn.textContent = "⌛"; // show temporary loading state
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        map.setView([latitude, longitude], 14);
+        showUserLocation(latitude, longitude);
+
+        try {
+          setSearching(true);
+          const places = await fetchNearbyPlaces(latitude, longitude, ["restaurant","cafe","fast_food"]);
+          showResults(places, [latitude, longitude]);
+        } catch (err) {
+          console.error(err);
+          alert("Could not fetch nearby places.");
+        } finally {
+          setSearching(false);
+          locateBtn.textContent = "📍"; // reset icon
+        }
+      },
+      () => {
+        alert("Unable to get your location.");
+        locateBtn.textContent = "📍";
+      }
+    );
+  });
 });

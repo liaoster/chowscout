@@ -146,11 +146,32 @@ p, ol { margin: 12px 0; color: var(--muted); }
   cursor: not-allowed;
 }
 
+.map-control-btn {
+  position: absolute;
+  bottom: 25px;
+  right: 10px;
+  z-index: 1000; /* above map layers */
+  background: var(--accent-contrast);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+  cursor: pointer;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.map-control-btn:hover {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  transform: translateX(-50%) scale(1.05);
+}
+
 .stack { display: grid; gap: 8px; margin-top: 12px; }
 input[type="text"] {
   padding: 10px 12px;
   border-radius: 8px;
-  /* border: 1px solid rgba(255,255,255,0.15); */
   border: 1px solid #94a3b8;
   background: transparent;
   color: var(--text);
