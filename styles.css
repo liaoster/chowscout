@@ -109,13 +109,7 @@ p, ol { margin: 12px 0; color: var(--muted); }
 
 /* .filters { margin: 10px 0; } */
 
-.map-icon img {
-  border-radius: 50%;
-  background: white;
-  padding: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
+/* Map search button */
 .map-btn {
   position: absolute;
   top: 4%;
@@ -146,6 +140,7 @@ p, ol { margin: 12px 0; color: var(--muted); }
   cursor: not-allowed;
 }
 
+/* Map user location button */
 .map-control-btn {
   position: absolute;
   bottom: 25px;
@@ -169,6 +164,17 @@ p, ol { margin: 12px 0; color: var(--muted); }
   background: var(--accent);
   color: var(--accent-contrast);
   transform: scale(1.05);
+}
+
+
+/* FIX THIS HERE */
+/* Map restaurant icons */
+.map-icon {
+  transition: transform 0.2s ease; /* smooth scaling */
+}
+.map-icon:hover {
+  transform: scale(1.05) !important; /* enlarge 5% */
+  z-index: 999 !important; /* optional: bring hovered marker above others */
 }
 
 .stack { display: grid; gap: 8px; margin-top: 12px; }
