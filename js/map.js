@@ -26,13 +26,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Food category icons ---
   const icons = {
-    restaurant: makeIcon("https://cdn-icons-png.flaticon.com/128/3170/3170733.png"),
-    cafe: makeIcon("https://cdn-icons-png.flaticon.com/128/13888/13888476.png"),
-    fast_food: makeIcon("https://cdn-icons-png.flaticon.com/128/5787/5787016.png"),
-    default: makeIcon("https://cdn-icons-png.flaticon.com/128/149/149059.png")
+    default: makeIcon("icons/restaurant.png", [30, 30]),
+    restaurant: makeIcon("icons/restaurant.png", [30, 30]),
+    cafe: makeIcon("icons/cafe.png", [30, 30]),
+    fast_food: makeIcon("icons/fast_food.png", [30, 30])
   };
 
-  const userIcon = makeIcon("https://cdn-icons-png.flaticon.com/128/149/149060.png", [28, 28]);
+  // const userIcon = makeIcon("https://cdn-icons-png.flaticon.com/128/149/149060.png", [28, 28]);
+  const userIcon = makeIcon("icons/user_location.png", [30, 30]);
 
   // --- Helper: Convert ZIP to coordinates (Nominatim) ---
   async function geocodeZip(zip) {
@@ -267,4 +268,5 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     );
   });
+
 });
