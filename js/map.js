@@ -26,14 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Food category icons ---
   const icons = {
-    default: makeIcon("icons/restaurant.png", [30, 30]),
-    restaurant: makeIcon("icons/restaurant.png", [30, 30]),
-    cafe: makeIcon("icons/cafe.png", [30, 30]),
-    fast_food: makeIcon("icons/fast_food.png", [30, 30])
+    default: makeIcon("icons/restaurant.png", [42, 42]),
+    restaurant: makeIcon("icons/restaurant.png", [42, 42]),
+    cafe: makeIcon("icons/cafe.png", [42, 42]),
+    fast_food: makeIcon("icons/fast_food.png", [42, 42])
   };
 
-  // const userIcon = makeIcon("https://cdn-icons-png.flaticon.com/128/149/149060.png", [28, 28]);
-  const userIcon = makeIcon("icons/user_location.png", [30, 30]);
+  const userIcon = makeIcon("icons/user_location.png", [42, 42]);
 
   // --- Helper: Convert ZIP to coordinates (Nominatim) ---
   async function geocodeZip(zip) {
