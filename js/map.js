@@ -26,13 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Food category icons ---
   const icons = {
-    default: makeIcon("icons/restaurant.png", [42, 42]),
-    restaurant: makeIcon("icons/restaurant.png", [42, 42]),
-    cafe: makeIcon("icons/cafe.png", [42, 42]),
-    fast_food: makeIcon("icons/fast_food.png", [42, 42])
+    default: makeIcon("icons/restaurant.png", [45, 45]),
+    restaurant: makeIcon("icons/restaurant.png", [45, 45]),
+    cafe: makeIcon("icons/cafe.png", [45, 45]),
+    fast_food: makeIcon("icons/fast_food.png", [45, 45])
   };
 
-  const userIcon = makeIcon("icons/user_location.png", [42, 42]);
+  const userIcon = makeIcon("icons/user_location.png", [36, 36]);
 
   // --- Helper: Convert ZIP to coordinates (Nominatim) ---
   async function geocodeZip(zip) {
@@ -105,14 +105,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const name = p.tags.name || "Unnamed place";
       const type = p.tags.amenity || "place";
-      const cuisine = p.tags.cuisine ? `<br><b>Cuisine:</b> ${p.tags.cuisine}` : "";
+      const cuisine = p.tags.cuisine ? `<br><b>Cuisine:</b> ${p.tags.cuisine.charAt(0).toUpperCase() + p.tags.cuisine.slice(1).replace("_", " ")}` : "";
 
       let icon = icons.default;
       if (type === "restaurant") icon = icons.restaurant;
       else if (type === "cafe") icon = icons.cafe;
       else if (type === "fast_food") icon = icons.fast_food;
 
-      const marker = L.marker([lat, lon], { icon }).bindPopup(`<b>${name}</b><br>${type}${cuisine}`);
+      // const marker = L.marker([lat, lon], { icon }).bindPopup(`<b>${name}</b><br><b>Category: </b>${type}${cuisine}`);
+      const marker = L.marker([lat, lon], { icon }).bindTooltip(`<b>${name}</b><br><b>Category: </b>${type}${cuisine}`, {
+        permanent: false,
+        direction: "top",
+        offset: [0, -45],
+      });
       resultsLayer.addLayer(marker);
       bounds.push([lat, lon]);
     });
