@@ -166,15 +166,26 @@ p, ol { margin: 12px 0; color: var(--muted); }
   transform: scale(1.05);
 }
 
-
-/* FIX THIS HERE */
 /* Map restaurant icons */
+/* Container stays fixed (Leaflet handles its position) */
 .map-icon {
-  transition: transform 0.2s ease; /* smooth scaling */
+  width: 45px;
+  height: 45px;
+  position: relative;
+  overflow: visible;
 }
-.map-icon:hover {
-  transform: scale(1.05) !important; /* enlarge 5% */
-  z-index: 999 !important; /* optional: bring hovered marker above others */
+/* Image scales without moving marker */
+.map-icon-img {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.2s ease;
+  transform-origin: center center;
+  display: block;
+}
+/* Hover effect — only scale the image */
+.map-icon:hover .map-icon-img {
+  transform: scale(1.15);
+  z-index: 9999;
 }
 
 .stack { display: grid; gap: 8px; margin-top: 12px; }

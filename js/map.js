@@ -14,13 +14,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultsLayer = L.layerGroup().addTo(map);
 
   // --- Custom icon factory ---
-  function makeIcon(iconUrl, size = [32, 32]) {
-    return L.icon({
-      iconUrl,
+  // function makeIcon(iconUrl, size = [32, 32]) {
+  //   return L.icon({
+  //     iconUrl,
+  //     iconSize: size,
+  //     iconAnchor: [size[0] / 2, size[1]],
+  //     popupAnchor: [0, -size[1] + 4],
+  //     className: "map-icon"
+  //   });
+  // }
+  function makeIcon(iconUrl, size = [45, 45]) {
+    return L.divIcon({
+      className: "map-icon",
+      html: `<img src="${iconUrl}" class="map-icon-img" style="width:${size[0]}px; height:${size[1]}px;">`,
       iconSize: size,
-      iconAnchor: [size[0] / 2, size[1]],
-      popupAnchor: [0, -size[1] + 4],
-      className: "map-icon"
+      iconAnchor: [size[0] / 2, size[1]],  // center bottom
+      popupAnchor: [0, -size[1] + 4]
     });
   }
 
@@ -112,7 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
       else if (type === "cafe") icon = icons.cafe;
       else if (type === "fast_food") icon = icons.fast_food;
 
-      // const marker = L.marker([lat, lon], { icon }).bindPopup(`<b>${name}</b><br><b>Category: </b>${type}${cuisine}`);
       const marker = L.marker([lat, lon], { icon }).bindTooltip(`<b>${name}</b><br><b>Category: </b>${type}${cuisine}`, {
         permanent: false,
         direction: "top",

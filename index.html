@@ -59,14 +59,17 @@
             <button id="searchHere" class="map-btn">Scout Here</button>
             <button id="locateBtn" type="button" class="map-control-btn" title="Find My Location"><i data-lucide="locate-fixed"></i></button>
           </div>
-
-          <label for="addressInput">Delivery Address (optional)</label>
-          <input id="addressInput" name="address" type="text" placeholder="123 Main St, New York, NY 10001" />
-          
-          <button type="submit" class="button">Scout</button>
         </form>
       </section>
 
+      <section class="card">
+        <form id="scoutForm" class="stack" autocomplete="off">
+          <label for="addressInput">Delivery Address (optional)</label>
+          <input id="addressInput" name="address" type="text" placeholder="123 Main St, New York, NY 10001" />
+          <button type="submit" class="button">Scout</button>
+        </form>
+      </section>
+      
       <section class="card">
         <h2>Results</h2>
         <div id="results">
