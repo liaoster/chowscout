@@ -188,6 +188,14 @@ p, ol { margin: 12px 0; color: var(--muted); }
   z-index: 9999;
 }
 
+/* Selected restaurant menu */
+.selected-restaurant-display {
+  background: var(--panel);
+  color: var(--text);
+  min-height: 20px;
+  padding: 10px 0px;
+}
+
 .stack { display: grid; gap: 8px; margin-top: 12px; }
 input[type="text"] {
   padding: 10px 12px;

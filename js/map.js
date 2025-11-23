@@ -14,15 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const resultsLayer = L.layerGroup().addTo(map);
 
   // --- Custom icon factory ---
-  // function makeIcon(iconUrl, size = [32, 32]) {
-  //   return L.icon({
-  //     iconUrl,
-  //     iconSize: size,
-  //     iconAnchor: [size[0] / 2, size[1]],
-  //     popupAnchor: [0, -size[1] + 4],
-  //     className: "map-icon"
-  //   });
-  // }
   function makeIcon(iconUrl, size = [45, 45]) {
     return L.divIcon({
       className: "map-icon",
@@ -42,6 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const userIcon = makeIcon("icons/user_location.png", [36, 36]);
+
+  // --- Select restaurant button ---
+  window.selectRestaurant = function(name) {
+    document.getElementById("selectedRestaurant").innerText = name;
+  };
+
 
   // --- Helper: Convert ZIP to coordinates (Nominatim) ---
   async function geocodeZip(zip) {
@@ -121,11 +118,25 @@ document.addEventListener("DOMContentLoaded", () => {
       else if (type === "cafe") icon = icons.cafe;
       else if (type === "fast_food") icon = icons.fast_food;
 
-      const marker = L.marker([lat, lon], { icon }).bindTooltip(`<b>${name}</b><br><b>Category: </b>${type}${cuisine}`, {
-        permanent: false,
-        direction: "top",
-        offset: [0, -45],
-      });
+      // --- Popup content ---
+      const popupHtml = `
+        <div>
+          <b>${name}</b><br>
+          <b>Category:</b> ${type}
+          ${cuisine}
+          <br>
+          <div style="margin-top:6px; text-align:center;">
+            <button type="button" onclick="selectRestaurant('${name.replace(/'/g, "\\'")}')" 
+                    style="padding:6px 10px; border-radius:6px; background:var(--accent); color:white; border:none; cursor:pointer;">
+              Select
+            </button>
+          </div>
+        </div>
+      `;
+      const marker = L.marker([lat, lon], { icon })
+        .bindPopup(popupHtml)
+        .on("click", () => marker.openPopup());
+
       resultsLayer.addLayer(marker);
       bounds.push([lat, lon]);
     });
